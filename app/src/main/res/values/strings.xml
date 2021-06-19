@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">hw06</string>
+    <string name="go_to_calc_label">Посчитаем?</string>
+    <string name="title_edit_text_hint">Заголовок</string>
+    <string name="created_on_text_view_hint">Дата созданияизменения заметки</string>
+    <string name="text_edit_text_hint">Текст заметки</string>
+    <string name="save_button_label">Сохранить</string>
+</resources>

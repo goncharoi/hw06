@@ -8,14 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
 public class NoteListFragment extends Fragment {
+    private static NoteListFragment noteListFragment;
     private List<NoteEntity> noteEntityList;
     private LinearLayout linearLayout;
 
@@ -26,8 +31,10 @@ public class NoteListFragment extends Fragment {
         linearLayout.addView(button);
     }
 
-    public static NoteListFragment newInstance(List<NoteEntity> noteEntityList) {
-        NoteListFragment noteListFragment = new NoteListFragment();
+    public static NoteListFragment getInstance(List<NoteEntity> noteEntityList) {
+        if (noteListFragment == null) {
+            noteListFragment = new NoteListFragment();
+        }
         noteListFragment.noteEntityList = noteEntityList;
         return noteListFragment;
     }
@@ -38,10 +45,18 @@ public class NoteListFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (!(context instanceof Controller)) {
             throw new RuntimeException("Activity must implement NoteListFragment.Controller");
+        }
+        if (noteEntityList == null) {
+            noteEntityList = (List<NoteEntity>) DataHolder.getInstance().getData(Key.NOTE_LIST);
         }
     }
 

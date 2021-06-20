@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // определяем, выбрана ли заметка для редактирования и какой в каком положении экран
+        // определяем, выбрана ли заметка для редактирования и в каком положении экран
         NoteEntity noteEntity = (NoteEntity) DataHolder.getInstance().getData(Key.CURRENT_NOTE);
         boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
                         : noteEntity != null
                         ? NoteFragment.getInstance(noteEntity)
                         : NoteListFragment.getInstance(noteEntityList))
-                .commitNow();
+                .commit();
         // В детальный контейнер помещается выбранная заметка, если она есть и ориентация альбомная,
         // иначе - ничего
         if (isLandscape && noteEntity != null) {
@@ -59,11 +61,12 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
                     .beginTransaction()
                     .replace(R.id.detail_container, NoteFragment.getInstance(noteEntity))
                     .addToBackStack(null)
-                    .commitNow();
+                    .commit();
         }
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(findViewById(R.id.toolbar));
+
+        ((BottomNavigationView) findViewById(R.id.navigation)).setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     @Override
@@ -153,13 +156,6 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
             case R.id.menu_options:
                 Toast.makeText(MainActivity.this, R.string.menu_options_toast, Toast.LENGTH_LONG).show();
                 return true;
-            case R.id.menu_add:
-                // Создаем и автоматически именуем новую заметку
-                int lvNewId = noteEntityList.size() + 1;
-                noteEntityList.add(new NoteEntity(lvNewId, getString(R.string.new_note_title) + lvNewId, ""));
-                // Если внутри контейнера находится список заметок - его надо обновить
-                refreshNoteListFragment();
-                return true;
         }
         return super.onOptionsItemSelected(ioItem);
     }
@@ -170,5 +166,42 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = item -> {
+        switch (item.getItemId()) {
+            case R.id.menu_up:
+                shiftNote(1);
+                return true;
+            case R.id.menu_down:
+                shiftNote(-1);
+                return true;
+            case R.id.menu_add:
+                // Создаем и автоматически именуем новую заметку
+                int lvNewId = noteEntityList.size() + 1;
+                NoteEntity noteEntity = new NoteEntity(lvNewId, getString(R.string.new_note_title) + lvNewId, "");
+                noteEntityList.add(noteEntity);
+                openNoteScreen(noteEntity);
+                // Если внутри контейнера находится список заметок - его надо обновить
+                refreshNoteListFragment();
+                return true;
+            case R.id.menu_to_list:
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, NoteListFragment.getInstance(noteEntityList))
+                        .commit();
+                return true;
+        }
+        return false;
+    };
+
+    private  void shiftNote(int offset){
+        NoteEntity noteEntity = noteEntityList.get(
+                (noteEntityList.size() + noteEntityList.indexOf(DataHolder.getInstance().getData(Key.CURRENT_NOTE)) + offset)
+                        % noteEntityList.size()
+        );
+        openNoteScreen(noteEntity);
+    }
+
 
 }

@@ -5,7 +5,7 @@
     <string name="created_on_text_view_hint">Дата созданияизменения заметки</string>
     <string name="text_edit_text_hint">Текст заметки</string>
     <string name="save_button_label">Сохранить</string>
-    <string name="menu_add_label">Добавить заметку</string>
+    <string name="menu_add_label">Добавить</string>
     <string name="menu_options_label">Настройки</string>
     <string name="menu_help_label">Помощь</string>
     <string name="menu_about_label">О программе</string>
@@ -16,4 +16,7 @@
     <string name="menu_calculator_label">Калькулятор</string>
     <string name="menu_change_label">Изменить</string>
     <string name="menu_delete_label">Удалить</string>
+    <string name="menu_up">Предудыщая</string>
+    <string name="menu_down">Следующая</string>
+    <string name="menu_to_list">К списку</string>
 </resources>

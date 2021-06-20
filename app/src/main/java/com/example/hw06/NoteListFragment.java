@@ -14,9 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -29,7 +32,6 @@ public class NoteListFragment extends Fragment {
     private void addNoteToList(LinearLayout layout, NoteEntity noteEntity) {
         Button button = new Button(getContext());
         button.setText(noteEntity.toString());
-//        button.setOnClickListener(v -> ((Controller) getActivity()).openNoteScreen(noteEntity));
         layout.addView(button);
         initPopupMenu(button, noteEntity);
     }

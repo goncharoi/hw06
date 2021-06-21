@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -13,18 +12,16 @@ import androidx.fragment.app.Fragment;
 
 public class NoteFragment extends Fragment {
     private NoteEntity noteEntity;
-    private static NoteFragment noteFragment;
 
     private EditText titleEt;
     private EditText textEt;
     private TextView createdOnTw;
-    private Button saveBtn;
 
     public static NoteFragment getInstance(NoteEntity noteEntity) {
-        if (noteFragment == null) {
-            noteFragment = new NoteFragment();
-        }
-        noteFragment.noteEntity = noteEntity; //таким образом ссылка будет хранится на конкретный экземпляр
+        NoteFragment noteFragment = new NoteFragment();
+        //таким образом ссылка будет хранится на конкретный экземпляр
+        //все изменения будут производится непосредственно над экемпляром из списка в MainActivity
+        noteFragment.noteEntity = noteEntity;
         DataHolder.getInstance().putData(Key.CURRENT_NOTE, noteEntity);
         return noteFragment;
     }
@@ -37,9 +34,7 @@ public class NoteFragment extends Fragment {
         textEt = view.findViewById(R.id.text_edit_text);
         createdOnTw = view.findViewById(R.id.created_on_text_view);
 
-        saveBtn = view.findViewById(R.id.save_button);
-
-        saveBtn.setOnClickListener(v -> {
+        view.findViewById(R.id.save_button).setOnClickListener(v -> {
             Controller controller = (Controller) getActivity();
             noteEntity.setText(textEt.getText().toString());
             noteEntity.setTitle(titleEt.getText().toString());
@@ -50,19 +45,16 @@ public class NoteFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        //После поворота экрана надо вернуть в поля текущие изменяемые значения, если они сохранены
         String lvTitle = (String) DataHolder.getInstance().getData(Key.CURRENT_NOTE_TITLE);
         titleEt.setText(lvTitle == null
                 ? noteEntity.getTitle()
-//                : savedInstanceState.getString(Key.CURRENT_NOTE_TITLE));
                 : lvTitle);
         String lvText = (String) DataHolder.getInstance().getData(Key.CURRENT_NOTE_TEXT);
         textEt.setText(lvText == null
                 ? noteEntity.getText()
-//                : savedInstanceState.getString(Key.CURRENT_NOTE_TEXT));
                 : lvText);
 
-//        titleEt.setText(noteEntity.getTitle());
-//        textEt.setText(noteEntity.getText());
         createdOnTw.setText(noteEntity.getCreatedOn().toString());
     }
 
@@ -81,10 +73,13 @@ public class NoteFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle instanceState) {
         super.onSaveInstanceState(instanceState);
-//        instanceState.putString(Key.CURRENT_NOTE_TITLE, titleEt.getText().toString());
-//        instanceState.putString(Key.CURRENT_NOTE_TEXT, textEt.getText().toString());
-        DataHolder.getInstance().putData(Key.CURRENT_NOTE_TEXT, textEt.getText().toString());
-        DataHolder.getInstance().putData(Key.CURRENT_NOTE_TITLE, titleEt.getText().toString());
+        //При повороте экрана сохраняем текущие изменяемые значения
+        if (textEt != null) {
+            DataHolder.getInstance().putData(Key.CURRENT_NOTE_TEXT, textEt.getText().toString());
+        }
+        if (titleEt != null) {
+            DataHolder.getInstance().putData(Key.CURRENT_NOTE_TITLE, titleEt.getText().toString());
+        }
     }
 
     public interface Controller {

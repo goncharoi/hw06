@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 public class NoteFragment extends Fragment {
@@ -59,7 +60,7 @@ public class NoteFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (!(context instanceof Controller)) {
             throw new RuntimeException("Activity must implement NoteFragment.Controller");
@@ -71,7 +72,7 @@ public class NoteFragment extends Fragment {
 
     // Сохранение данных (полей ввода, но не самой заметки)
     @Override
-    public void onSaveInstanceState(Bundle instanceState) {
+    public void onSaveInstanceState(@NonNull Bundle instanceState) {
         super.onSaveInstanceState(instanceState);
         //При повороте экрана сохраняем текущие изменяемые значения
         if (textEt != null) {

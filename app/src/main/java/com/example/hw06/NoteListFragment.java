@@ -45,8 +45,7 @@ public class NoteListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_note_list, null);
-        return view;
+        return inflater.inflate(R.layout.fragment_note_list, null);
     }
 
     private void initPopupMenu(View view, NoteEntity noteEntity) {
@@ -72,7 +71,7 @@ public class NoteListFragment extends Fragment {
 
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (!(context instanceof Controller)) {
             throw new RuntimeException("Activity must implement NoteListFragment.Controller");

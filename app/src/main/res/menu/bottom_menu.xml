@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_to_list"
+        android:icon="@android:drawable/ic_media_previous"
+        android:title="@string/menu_to_list" />
+    <item
+        android:id="@+id/menu_up"
+        android:icon="@android:drawable/arrow_up_float"
+        android:title="@string/menu_up" />
+
+    <item
+        android:id="@+id/menu_down"
+        android:icon="@android:drawable/arrow_down_float"
+        android:title="@string/menu_down" />
+
+    <item
+        android:id="@+id/menu_add"
+        android:icon="@android:drawable/ic_menu_add"
+        android:title="@string/menu_add_label" />
+</menu>

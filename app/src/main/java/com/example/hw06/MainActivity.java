@@ -22,7 +22,11 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
 
     List<NoteEntity> noteEntityList;
 
-    public MainActivity() {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
         // всегда работаем с одним и тем же экземпляром списка, чтобы не запутаться,
         // для этого при инициализации записываем его в синглтон и храним там до конца работы
         noteEntityList = (List<NoteEntity>) DataHolder.getInstance().getData(Key.NOTE_LIST);
@@ -33,12 +37,6 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
             noteEntityList.add(new NoteEntity(3, "ДЗ", "Разобраться с фрагментами, доделать интенты, ДЗ7"));
             DataHolder.getInstance().putData(Key.NOTE_LIST, noteEntityList);
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         // определяем, выбрана ли заметка для редактирования и в каком положении экран
         NoteEntity noteEntity = (NoteEntity) DataHolder.getInstance().getData(Key.CURRENT_NOTE);
@@ -85,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         DataHolder.getInstance().deleteData(Key.CURRENT_NOTE_TITLE);
     }
 
-    public void  removeNoteFragment(){
+    public void removeNoteFragment() {
         Fragment loNoteFragment = getSupportFragmentManager().findFragmentById(R.id.detail_container);
         if (loNoteFragment != null) {
             getSupportFragmentManager()
@@ -140,9 +138,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
     @Override
     public boolean onOptionsItemSelected(MenuItem ioItem) {
         // Обработка выбора пункта меню приложения (активити)
-        int lvId = ioItem.getItemId();
-
-        switch (lvId) {
+        switch (ioItem.getItemId()) {
             case R.id.menu_calculator:
                 Uri address = Uri.parse("calculator://intent");
                 Intent loCalculatorIntent = new Intent(Intent.ACTION_VIEW, address);
@@ -195,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         return false;
     };
 
-    private  void shiftNote(int offset){
+    private void shiftNote(int offset) {
         NoteEntity noteEntity = noteEntityList.get(
                 (noteEntityList.size() + noteEntityList.indexOf(DataHolder.getInstance().getData(Key.CURRENT_NOTE)) + offset)
                         % noteEntityList.size()

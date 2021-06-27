@@ -14,15 +14,6 @@
         android:textSize="@dimen/title_edit_text_size"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/created_on_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/created_on_text_view_hint"
-        android:inputType="datetime"
-        android:singleLine="true"
-        android:textSize="@dimen/fragment_note_text_size" />
-
     <ScrollView
         android:id="@+id/sv_scroll_content"
         android:layout_width="match_parent"
@@ -37,6 +28,14 @@
             android:textAlignment="textStart"
             android:textSize="@dimen/fragment_note_text_size" />
     </ScrollView>
+
+    <DatePicker
+        android:id="@+id/deadline_date_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:calendarViewShown="true"
+        android:datePickerMode="calendar" />
 
     <Button
         android:id="@+id/save_button"

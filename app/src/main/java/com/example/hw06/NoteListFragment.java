@@ -15,6 +15,16 @@ import java.util.List;
 public class NoteListFragment extends Fragment {
     private List<NoteEntity> noteEntityList;
 
+    private static final String KEY_NOTE_LIST = "NOTE_LIST"; //Ключи для хранения данных
+
+    public static void putData(List<NoteEntity> noteEntityList){
+        DataHolder.getInstance().putData(NoteListFragment.KEY_NOTE_LIST, noteEntityList);
+    }
+
+    public static List<NoteEntity> getData(){
+        return  (List<NoteEntity>) DataHolder.getInstance().getData(NoteListFragment.KEY_NOTE_LIST);
+    }
+
     public static NoteListFragment getInstance(List<NoteEntity> noteEntityList) {
         NoteListFragment noteListFragment = new NoteListFragment();
         //храним ссылку непосредственно на список в MainActivity
@@ -35,17 +45,17 @@ public class NoteListFragment extends Fragment {
             throw new RuntimeException("Activity must implement NoteListFragment.Controller");
         }
         if (noteEntityList == null) {
-            noteEntityList = (List<NoteEntity>) DataHolder.getInstance().getData(Key.NOTE_LIST);
+            noteEntityList = getData();
         }
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        Adapter adapter = new Adapter(new Adapter.NoteDiff());
-        recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(
-                new Adapter.OnItemClickListener() {
+        NoteAdapter noteAdapter = new NoteAdapter(new NoteAdapter.NoteDiff());
+        recyclerView.setAdapter(noteAdapter);
+        noteAdapter.setOnItemClickListener(
+                new NoteAdapter.OnItemClickListener() {
                     @Override
                     public void openNoteScreen(NoteEntity noteEntity) {
                         getController().openNoteScreen(noteEntity);
@@ -57,7 +67,7 @@ public class NoteListFragment extends Fragment {
                     }
                 }
         );
-        adapter.submitList(noteEntityList);
+        noteAdapter.submitList(noteEntityList);
     }
 
     private Controller getController() {

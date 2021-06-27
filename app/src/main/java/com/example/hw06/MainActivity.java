@@ -1,11 +1,9 @@
 package com.example.hw06;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +14,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NoteFragment.Controller, NoteListFragment.Controller {
@@ -29,17 +28,17 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
 
         // всегда работаем с одним и тем же экземпляром списка, чтобы не запутаться,
         // для этого при инициализации записываем его в синглтон и храним там до конца работы
-        noteEntityList = (List<NoteEntity>) DataHolder.getInstance().getData(Key.NOTE_LIST);
+        noteEntityList = NoteListFragment.getData();
         if (noteEntityList == null) {
             noteEntityList = new ArrayList<>();
-            noteEntityList.add(new NoteEntity(1, "Список вещей в поездку", "Палатка, спальник, пенка, рюкзак"));
-            noteEntityList.add(new NoteEntity(2, "Купить на ужин", "Хдеб, пиво, кобасу, сыр"));
-            noteEntityList.add(new NoteEntity(3, "ДЗ", "Разобраться с фрагментами, доделать интенты, ДЗ7"));
-            DataHolder.getInstance().putData(Key.NOTE_LIST, noteEntityList);
+            noteEntityList.add(new NoteEntity(1, "Список вещей в поездку", "Палатка, спальник, пенка, рюкзак", new Date()));
+            noteEntityList.add(new NoteEntity(2, "Купить на ужин", "Хдеб, пиво, кобасу, сыр", new Date()));
+            noteEntityList.add(new NoteEntity(3, "ДЗ", "Разобраться с фрагментами, доделать интенты, ДЗ7", new Date()));
+            NoteListFragment.putData(noteEntityList);
         }
 
         // определяем, выбрана ли заметка для редактирования и в каком положении экран
-        NoteEntity noteEntity = (NoteEntity) DataHolder.getInstance().getData(Key.CURRENT_NOTE);
+        NoteEntity noteEntity = NoteFragment.getCurrentNote();
         boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
 
         // В главный контейнер надо пометсить либо список заметок, если ориентация албомная,
@@ -73,14 +72,10 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
                 .beginTransaction()
                 .replace(R.id.container, NoteListFragment.getInstance(noteEntityList))
                 .commit();
-
         //если фрагмент с заметкой присутствует в правом контейнере - очистим его
         removeNoteFragment();
-
         // текущая заметка больше таковой не является и никаких текущих данных её тоже нет
-        DataHolder.getInstance().deleteData(Key.CURRENT_NOTE);
-        DataHolder.getInstance().deleteData(Key.CURRENT_NOTE_TEXT);
-        DataHolder.getInstance().deleteData(Key.CURRENT_NOTE_TITLE);
+        NoteFragment.deleteData();
     }
 
     public void removeNoteFragment() {
@@ -96,8 +91,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
     @Override
     public void openNoteScreen(NoteEntity noteEntity) {
         //Поскольку меняем заметку во фрагменте, меняем и текущие значения текстов
-        DataHolder.getInstance().putData(Key.CURRENT_NOTE_TEXT, noteEntity.getText());
-        DataHolder.getInstance().putData(Key.CURRENT_NOTE_TITLE, noteEntity.getTitle());
+        NoteFragment.putData(noteEntity);
         boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         getSupportFragmentManager()
                 .beginTransaction()
@@ -110,13 +104,10 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
     public void deleteNote(NoteEntity noteEntity) {
         // Если в хранилище данных зранится ссылка на ту же заметку, которую мы собрались удалять,
         // очистим его
-        if (DataHolder.getInstance().getData(Key.CURRENT_NOTE) == noteEntity) {
+        if (NoteFragment.getCurrentNote() == noteEntity) {
             // предварительно удалим заметку из детального просмотра, если она там есть
             removeNoteFragment();
-
-            DataHolder.getInstance().deleteData(Key.CURRENT_NOTE);
-            DataHolder.getInstance().deleteData(Key.CURRENT_NOTE_TEXT);
-            DataHolder.getInstance().deleteData(Key.CURRENT_NOTE_TITLE);
+            NoteFragment.deleteData();
         }
 
         // собственно дулаение заметки из списка
@@ -175,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
             case R.id.menu_add:
                 // Создаем и автоматически именуем новую заметку
                 int lvNewId = noteEntityList.size() + 1;
-                NoteEntity noteEntity = new NoteEntity(lvNewId, getString(R.string.new_note_title) + lvNewId, "");
+                NoteEntity noteEntity = new NoteEntity(lvNewId, getString(R.string.new_note_title) + lvNewId, "", new Date());
                 noteEntityList.add(noteEntity);
                 openNoteScreen(noteEntity);
                 // Если внутри контейнера находится список заметок - его надо обновить
@@ -193,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
 
     private void shiftNote(int offset) {
         NoteEntity noteEntity = noteEntityList.get(
-                (noteEntityList.size() + noteEntityList.indexOf(DataHolder.getInstance().getData(Key.CURRENT_NOTE)) + offset)
+                (noteEntityList.size() + noteEntityList.indexOf(NoteFragment.getCurrentNote()) + offset)
                         % noteEntityList.size()
         );
         openNoteScreen(noteEntity);

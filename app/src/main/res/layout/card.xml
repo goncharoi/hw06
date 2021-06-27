@@ -20,7 +20,7 @@
             android:textSize="@dimen/title_edit_text_size" />
 
         <TextView
-            android:id="@+id/note_card_date"
+            android:id="@+id/note_card_deadline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

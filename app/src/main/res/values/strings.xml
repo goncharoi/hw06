@@ -19,4 +19,5 @@
     <string name="menu_up">Предудыщая</string>
     <string name="menu_down">Следующая</string>
     <string name="menu_to_list">К списку</string>
+    <string name="note_item_deadline_text">Срок</string>
 </resources>

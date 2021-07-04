@@ -67,13 +67,13 @@ public class NoteAdapter extends ListAdapter<NoteEntity, NoteAdapter.NoteViewHol
 
     public class NoteViewHolder extends RecyclerView.ViewHolder {
         private final TextView titleTw;
-        private final TextView deadlineTw;
+        private final TextView deadlineTv;
         private NoteEntity noteEntity;
 
         public NoteViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTw = itemView.findViewById(R.id.note_card_title);
-            deadlineTw = itemView.findViewById(R.id.note_card_deadline);
+            deadlineTv = itemView.findViewById(R.id.note_card_deadline);
             itemView.setOnClickListener(v -> {
                 if (onItemClickListener != null) {
                     PopupMenu popupMenu = new PopupMenu(itemView.getContext(), v);
@@ -98,9 +98,10 @@ public class NoteAdapter extends ListAdapter<NoteEntity, NoteAdapter.NoteViewHol
         public void bind(NoteEntity noteEntity) {
             this.noteEntity = noteEntity;
             titleTw.setText(noteEntity.getTitle());
-            deadlineTw.setText(String.format("%s: %s",
+            deadlineTv.setText(String.format("%s: %s",
                     ((Activity) parent.getContext()).getString(R.string.note_item_deadline_text),
-                    new SimpleDateFormat("dd-MM-yy").format(noteEntity.getDeadline())
+                    new SimpleDateFormat(((Activity) parent.getContext()).getString(R.string.default_date_format))
+                            .format(noteEntity.getDeadline())
             ));
 
         }

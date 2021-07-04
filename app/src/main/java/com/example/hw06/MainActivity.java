@@ -1,5 +1,6 @@
 package com.example.hw06;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -11,16 +12,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements NoteFragment.Controller, NoteListFragment.Controller {
 
@@ -122,22 +121,34 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
 
     @Override
     public void deleteNote(NoteEntity noteEntity) {
-        // Если в хранилище данных зранится ссылка на ту же заметку, которую мы собрались удалять,
-        // очистим его
-        if (NoteFragment.getCurrentNote() == noteEntity) {
-            // предварительно удалим заметку из детального просмотра, если она там есть
-            removeNoteFragment();
-            NoteFragment.deleteData();
-        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.menu_delete_label)
+                .setIcon(R.drawable.ic_outline_warning_24)
+                .setMessage(R.string.menu_delete_toast)
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    // Если в хранилище данных зранится ссылка на ту же заметку, которую мы собрались удалять,
+                    // очистим его
+                    if (NoteFragment.getCurrentNote() == noteEntity) {
+                        // предварительно удалим заметку из детального просмотра, если она там есть
+                        removeNoteFragment();
+                        NoteFragment.deleteData();
+                    }
 
-        // собственно удаление заметки из списка
-        noteEntityList.remove(noteEntity);
-        db.collection(NOTE_LIST_TAB)
-                .document(noteEntity.getId().toString())
-                .delete();
+                    // собственно удаление заметки из списка
+                    noteEntityList.remove(noteEntity);
+                    db.collection(NOTE_LIST_TAB)
+                            .document(noteEntity.getId().toString())
+                            .delete();
 
-        // Если внутри контейнера находится список заметок - его надо обновить
-        refreshNoteListFragment();
+                    // Если внутри контейнера находится список заметок - его надо обновить
+                    refreshNoteListFragment();
+                })
+                .setNegativeButton(R.string.no, (dialog, which) -> {
+                    // ничего не делаем
+                })
+                .create()
+                .show();
     }
 
     private void refreshNoteListFragment() {
@@ -158,7 +169,12 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
                 Intent loCalculatorIntent = new Intent(Intent.ACTION_VIEW, address);
                 startActivity(loCalculatorIntent);
             case R.id.menu_about:
-                Toast.makeText(getApplicationContext(), R.string.menu_about_toast, Toast.LENGTH_LONG).show();
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.menu_about_label)
+                        .setIcon(R.drawable.ic_baseline_info_24)
+                        .setMessage(R.string.menu_about_toast)
+                        .create()
+                        .show();
                 return true;
             case R.id.menu_help:
                 Toast.makeText(getApplicationContext(), R.string.menu_help_toast, Toast.LENGTH_LONG).show();
@@ -166,8 +182,9 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
             case R.id.menu_options:
                 Toast.makeText(MainActivity.this, R.string.menu_options_toast, Toast.LENGTH_LONG).show();
                 return true;
+            default:
+                return super.onOptionsItemSelected(ioItem);
         }
-        return super.onOptionsItemSelected(ioItem);
     }
 
     @Override
@@ -187,10 +204,15 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
                 shiftNote(-1);
                 return true;
             case R.id.menu_add:
-                // Создаем и автоматически именуем новую заметку
-                int lvNewId = noteEntityList.size() + 1;
-                NoteEntity noteEntity = new NoteEntity(lvNewId, getString(R.string.new_note_title) + lvNewId, "", new Date());
+                // Создаем и автоматически именуем новую заметку и сразу сохраняем в базу
+                String lvNewId = UUID.randomUUID().toString();
+                NoteEntity noteEntity = new NoteEntity(lvNewId, getString(R.string.new_note_title), "", new Date());
                 noteEntityList.add(noteEntity);
+                db.collection(NOTE_LIST_TAB)
+                        .document(noteEntity.getId().toString())
+                        .set(noteEntity)
+                        .addOnFailureListener(e -> e.printStackTrace());
+
                 openNoteScreen(noteEntity);
                 // Если внутри контейнера находится список заметок - его надо обновить
                 refreshNoteListFragment();
@@ -201,12 +223,13 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
                         .replace(R.id.container, NoteListFragment.getInstance(noteEntityList))
                         .commit();
                 return true;
+            default:
+                return false;
         }
-        return false;
     };
 
     private void shiftNote(int offset) {
-        if(noteEntityList.isEmpty()) return;
+        if (noteEntityList.isEmpty()) return;
         NoteEntity noteEntity = noteEntityList.get(
                 (noteEntityList.size() + noteEntityList.indexOf(NoteFragment.getCurrentNote()) + offset)
                         % noteEntityList.size()

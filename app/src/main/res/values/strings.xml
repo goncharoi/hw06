@@ -20,4 +20,8 @@
     <string name="menu_down">Следующая</string>
     <string name="menu_to_list">К списку</string>
     <string name="note_item_deadline_text">Срок</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="menu_delete_toast">Вы и впрямь хотите удалить заметку?</string>
+    <string name="default_date_format">dd-MM-yy</string>
 </resources>

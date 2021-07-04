@@ -15,8 +15,6 @@ import java.util.List;
 public class NoteListFragment extends Fragment {
     private List<NoteEntity> noteEntityList;
 
-    private NoteAdapter noteAdapter;
-
     private static final String KEY_NOTE_LIST = "NOTE_LIST"; //Ключи для хранения данных
 
     public static void putData(List<NoteEntity> noteEntityList){
@@ -54,7 +52,7 @@ public class NoteListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        noteAdapter = new NoteAdapter(new NoteAdapter.NoteDiff());
+        NoteAdapter noteAdapter = new NoteAdapter(new NoteAdapter.NoteDiff());
         recyclerView.setAdapter(noteAdapter);
         noteAdapter.setOnItemClickListener(
                 new NoteAdapter.OnItemClickListener() {
@@ -70,12 +68,6 @@ public class NoteListFragment extends Fragment {
                 }
         );
         noteAdapter.submitList(noteEntityList);
-    }
-
-    public void setData(List<NoteEntity> noteEntityList){
-        if(noteAdapter != null){
-            noteAdapter.submitList(noteEntityList);
-        }
     }
 
     private Controller getController() {

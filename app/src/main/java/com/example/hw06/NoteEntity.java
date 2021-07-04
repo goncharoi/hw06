@@ -3,7 +3,7 @@ package com.example.hw06;
 import java.util.Date;
 
 public class NoteEntity {
-    private long id;
+    private String id;
     private String title;
     private String text;
     private Date deadline;
@@ -13,7 +13,7 @@ public class NoteEntity {
 
     }
 
-    public NoteEntity(long id, String title, String text, Date deadline) {
+    public NoteEntity(String id, String title, String text, Date deadline) {
         this.id = id;
         this.deadline = deadline;
         createdOn = new Date();//current date\time
@@ -26,7 +26,7 @@ public class NoteEntity {
         return title + "/" + createdOn.toString();
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

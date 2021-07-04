@@ -3,11 +3,15 @@ package com.example.hw06;
 import java.util.Date;
 
 public class NoteEntity {
-    private final long id;
+    private long id;
     private String title;
     private String text;
     private Date deadline;
-    private final Date createdOn;
+    private Date createdOn;
+
+    public NoteEntity() {
+
+    }
 
     public NoteEntity(long id, String title, String text, Date deadline) {
         this.id = id;
@@ -53,4 +57,5 @@ public class NoteEntity {
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
+
 }

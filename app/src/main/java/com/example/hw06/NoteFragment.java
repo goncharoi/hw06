@@ -67,7 +67,7 @@ public class NoteFragment extends Fragment {
             noteEntity.setText(textEt.getText().toString());
             noteEntity.setTitle(titleEt.getText().toString());
             noteEntity.setDeadline(getDeadlineFromDatePicker());
-            controller.saveResult(noteEntity);
+            controller.saveNote(noteEntity);
         });
         return view;
     }
@@ -117,7 +117,7 @@ public class NoteFragment extends Fragment {
     }
 
     public interface Controller {
-        void saveResult(NoteEntity noteEntity);
+        void saveNote(NoteEntity noteEntity);
     }
 
     // Получение даты из DatePicker

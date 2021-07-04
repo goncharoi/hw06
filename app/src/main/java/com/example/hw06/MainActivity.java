@@ -11,37 +11,52 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity implements NoteFragment.Controller, NoteListFragment.Controller {
 
-    List<NoteEntity> noteEntityList;
+    private static final String NOTE_LIST_TAB = "NOTE_LIST_TAB";
+    private List<NoteEntity> noteEntityList;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // определяем, выбрана ли заметка для редактирования и в каком положении экран
+        NoteEntity noteEntity = NoteFragment.getCurrentNote();
+        boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+
+        db = FirebaseFirestore.getInstance();
         // всегда работаем с одним и тем же экземпляром списка, чтобы не запутаться,
         // для этого при инициализации записываем его в синглтон и храним там до конца работы
         noteEntityList = NoteListFragment.getData();
         if (noteEntityList == null) {
             noteEntityList = new ArrayList<>();
-            noteEntityList.add(new NoteEntity(1, "Список вещей в поездку", "Палатка, спальник, пенка, рюкзак", new Date()));
-            noteEntityList.add(new NoteEntity(2, "Купить на ужин", "Хдеб, пиво, кобасу, сыр", new Date()));
-            noteEntityList.add(new NoteEntity(3, "ДЗ", "Разобраться с фрагментами, доделать интенты, ДЗ7", new Date()));
+            db.collection(NOTE_LIST_TAB)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                noteEntityList.add(document.toObject(NoteEntity.class));
+                            }
+                            //поскольку получение данных асинхронное - обновим фрагмент
+                            refreshNoteListFragment();
+                        }
+                    });
             NoteListFragment.putData(noteEntityList);
         }
-
-        // определяем, выбрана ли заметка для редактирования и в каком положении экран
-        NoteEntity noteEntity = NoteFragment.getCurrentNote();
-        boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-
-        // В главный контейнер надо пометсить либо список заметок, если ориентация албомная,
+        // В главный контейнер надо поместить либо список заметок, если ориентация албомная,
         // либо редактируемую заметку, если она выбрана и ориентация экрана портретная
         getSupportFragmentManager()
                 .beginTransaction()
@@ -67,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
     }
 
     @Override
-    public void saveResult(NoteEntity noteEntity) {
+    public void saveNote(NoteEntity noteEntity) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, NoteListFragment.getInstance(noteEntityList))
@@ -76,6 +91,11 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
         removeNoteFragment();
         // текущая заметка больше таковой не является и никаких текущих данных её тоже нет
         NoteFragment.deleteData();
+
+        db.collection(NOTE_LIST_TAB)
+                .document(noteEntity.getId().toString())
+                .set(noteEntity)
+                .addOnFailureListener(e -> e.printStackTrace());
     }
 
     public void removeNoteFragment() {
@@ -110,8 +130,11 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
             NoteFragment.deleteData();
         }
 
-        // собственно дулаение заметки из списка
+        // собственно удаление заметки из списка
         noteEntityList.remove(noteEntity);
+        db.collection(NOTE_LIST_TAB)
+                .document(noteEntity.getId().toString())
+                .delete();
 
         // Если внутри контейнера находится список заметок - его надо обновить
         refreshNoteListFragment();
@@ -183,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements NoteFragment.Cont
     };
 
     private void shiftNote(int offset) {
+        if(noteEntityList.isEmpty()) return;
         NoteEntity noteEntity = noteEntityList.get(
                 (noteEntityList.size() + noteEntityList.indexOf(NoteFragment.getCurrentNote()) + offset)
                         % noteEntityList.size()

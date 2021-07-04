@@ -97,7 +97,7 @@ public class NoteAdapter extends ListAdapter<NoteEntity, NoteAdapter.NoteViewHol
 
         public void bind(NoteEntity noteEntity) {
             this.noteEntity = noteEntity;
-            titleTw.setText(noteEntity.getText());
+            titleTw.setText(noteEntity.getTitle());
             deadlineTw.setText(String.format("%s: %s",
                     ((Activity) parent.getContext()).getString(R.string.note_item_deadline_text),
                     new SimpleDateFormat("dd-MM-yy").format(noteEntity.getDeadline())

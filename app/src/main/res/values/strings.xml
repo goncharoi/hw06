@@ -5,4 +5,23 @@
     <string name="created_on_text_view_hint">Дата созданияизменения заметки</string>
     <string name="text_edit_text_hint">Текст заметки</string>
     <string name="save_button_label">Сохранить</string>
+    <string name="menu_add_label">Добавить</string>
+    <string name="menu_options_label">Настройки</string>
+    <string name="menu_help_label">Помощь</string>
+    <string name="menu_about_label">О программе</string>
+    <string name="menu_about_toast">Здесь мы расскажем Вам о нашей программе. Когда-нибудь.</string>
+    <string name="menu_help_toast">Помощь уже в пути</string>
+    <string name="menu_options_toast">Тут можно будет настраивать всякое</string>
+    <string name="new_note_title">Новая заметка</string>
+    <string name="menu_calculator_label">Калькулятор</string>
+    <string name="menu_change_label">Изменить</string>
+    <string name="menu_delete_label">Удалить</string>
+    <string name="menu_up">Предудыщая</string>
+    <string name="menu_down">Следующая</string>
+    <string name="menu_to_list">К списку</string>
+    <string name="note_item_deadline_text">Срок</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="menu_delete_toast">Вы и впрямь хотите удалить заметку?</string>
+    <string name="default_date_format">dd-MM-yy</string>
 </resources>

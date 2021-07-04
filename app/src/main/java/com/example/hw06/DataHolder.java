@@ -7,7 +7,7 @@ public class DataHolder { //Класс для хранения данных
 
     private HashMap<String, Object> moHashMap;
 
-    private DataHolder(){
+    private DataHolder() {
         moHashMap = new HashMap<>();
     }
 
@@ -24,6 +24,8 @@ public class DataHolder { //Класс для хранения данных
         return moHashMap.get(ivKey);
     }
 
-    public void  deleteData(String ivKey) { moHashMap.remove(ivKey); }
+    public void deleteData(String ivKey) {
+        moHashMap.remove(ivKey);
+    }
 
 }

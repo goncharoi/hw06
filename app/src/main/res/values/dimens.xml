@@ -4,4 +4,5 @@
     <dimen name="fragment_note_text_size">20sp</dimen>
     <dimen name="container_height">685dp</dimen>
     <dimen name="linear_layout_height">354dp</dimen>
+    <dimen name="card_layout_padding">16dp</dimen>
 </resources>

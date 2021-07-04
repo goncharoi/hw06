@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "49629838282",
+    "project_id": "hw09notes",
+    "storage_bucket": "hw09notes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49629838282:android:604a0225b6b5cff1cb6d33",
+        "android_client_info": {
+          "package_name": "com.example.hw06"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "49629838282-nevt7gtvlf22tg30msiqbluql430ogsv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYNalAotjve87C7kS1beohKnjTePnAes0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "49629838282-nevt7gtvlf22tg30msiqbluql430ogsv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
